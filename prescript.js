@@ -147,10 +147,7 @@ let signer = new AWSSigner(
 
 let client = new AWSLambdaClient(signer);
 
-console.log(pm.environment.get("Functionpayload"))
-debugger
-
-let event_details = JSON.parse(pm.environment.get("Functionpayload"))
+let event_details = JSON.parse(pm.environment.get("FunctionPayload-Direct"))
 let base64_event = btoa(unescape(encodeURIComponent(JSON.stringify(event_details))));
 let now = new Date();
 let timestamp = now.getTime() / 1000;
@@ -175,9 +172,6 @@ let payload = {
     ]
 }
 
-console.log(event_details);
-console.log(payload);
-debugger
 /* List functions example
 client.lambda_list_functions((err, response) => {
             if (response) {
