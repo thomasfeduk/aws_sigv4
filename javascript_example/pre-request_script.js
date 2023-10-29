@@ -136,7 +136,6 @@ class AWSLambdaClient {
     }
 }
 
-
 // Usage in Postman pre-request script:
 let signer = new AWSSigner(
     pm.environment.get("AWS-AccessKeyId"),
@@ -147,42 +146,7 @@ let signer = new AWSSigner(
 
 let client = new AWSLambdaClient(signer);
 
-let event_details = JSON.parse(pm.environment.get("FunctionPayload-Direct"))
-let base64_event = btoa(unescape(encodeURIComponent(JSON.stringify(event_details))));
-let now = new Date();
-let timestamp = now.getTime() / 1000;
-let payload = {
-    "Records": [
-        {
-            "awsRegion": pm.environment.get("AWS-Region"),
-            "eventID": "shardId-000000000000:49633338759142637784330842476259733211875868535316021250",
-            "eventName": "aws:kinesis:record",
-            "eventSource": "aws:kinesis",
-            "eventSourceARN": `arn:aws:kinesis:${pm.environment.get("AWS-Region")}:12345:stream/${pm.environment.get("FunctionName")}`,
-            "eventVersion": "1.0",
-            "invokeIdentityArn": `arn:aws:iam::12345:role/${pm.environment.get("FunctionName")}-role`,
-            "kinesis": {
-                "approximateArrivalTimestamp": timestamp,
-                "data": base64_event,
-                "partitionKey": "1:10000001128",
-                "sequenceNumber": "49633338759142637784330842476259733211875868535316021250",
-                "kinesisSchemaVersion": "1.0"
-            }
-        }
-    ]
-}
-
-/* List functions example
-client.lambda_list_functions((err, response) => {
-            if (response) {
-                console.log('AWS Response: '+ response.code + ' ' + response.status);
-                console.log(response.text());
-            }
-});
-*/
-
-
-client.lambda_invoke(pm.environment.get("FunctionName"), payload, (err, response) => {
+client.lambda_invoke(pm.environment.get("FunctionName"), JSON.parse(pm.environment.get("FunctionPayload")), (err, response) => {
     if (response) {
         console.log('Lambda Response: '+ response.code + ' ' + response.status);
         console.log(response.text());
